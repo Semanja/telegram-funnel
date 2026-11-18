@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ваш план эфемерной воронки | Лид-магнит для Telegram-канала</title>
+<meta name="description" content="Получите персональный план действий по эфемерной воронке для вашего канала и оставьте заявку на настройку под ключ.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: #f5f7fa;
+    color: #1a1a1a;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
+  .container {
+    max-width: 430px;
+    margin: 0 auto;
+    background: #ffffff;
+    min-height: 100vh;
+    box-shadow: 0 0 40px rgba(0,0,0,0.06);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    background: linear-gradient(135deg, #0088cc 0%, #0066aa 100%);
+    color: #fff;
+    padding: 16px;
+    text-align: center;
+  }
+  header .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  header h1 { font-size: 17px; font-weight: 700; letter-spacing: -0.2px; line-height: 1.3; }
+  header p { font-size: 12px; opacity: 0.9; margin-top: 4px; }
+  .progress {
+    height: 4px;
+    background: #eaeaea;
+    position: relative;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: #0088cc;
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+  .screen {
+    padding: 20px 16px;
+    display: none;
+    animation: fadeIn 0.35s ease;
+  }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  h2 { font-size: 19px; font-weight: 700; margin-bottom: 14px; color: #111; letter-spacing: -0.3px; }
+  p { font-size: 15px; color: #333; margin-bottom: 14px; }
+  .highlight { color: #0088cc; font-weight: 600; }
+  .btn {
+    width: 100%;
+    background: #0088cc;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: transform 0.1s, background 0.2s;
+    box-shadow: 0 4px 12px rgba(0,136,204,0.25);
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn.secondary { background: #e2e8f0; color: #334155; box-shadow: none; }
+  .btn.ghost { background: transparent; color: #0088cc; border: 1px solid #0088cc; box-shadow: none; }
+  .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .card {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 16px 0;
+    border: 1px solid #e2e8f0;
+  }
+  .card-title { font-weight: 700; font-size: 15px; color: #0f172a; margin-bottom: 8px; }
+  .card-body { font-size: 14px; color: #475569; line-height: 1.55; }
+  .spacer { flex: 1; }
+  .footer-note {
+    font-size: 12px;
+    color: #64748b;
+    text-align: center;
+    padding: 12px 16px;
+    border-top: 1px solid #e2e8f0;
+    line-height: 1.4;
+  }
+  .telegram-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff7e6;
+    border: 1px dashed #f59e0b;
+    color: #92400e;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+  .form-group { margin-bottom: 14px; }
+  label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px; }
+  input, select, textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: inherit;
+    background: #fff;
+  }
+  input:focus, select:focus, textarea:focus { outline: 2px solid #0088cc; border-color: #0088cc; }
+  textarea { min-height: 90px; resize: vertical; }
+  .success {
+    text-align: center;
+    padding: 30px 16px;
+  }
+  .success-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .success h2 { color: #166534; margin-bottom: 8px; }
+  .success p { color: #475569; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+  .chip {
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #475569;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .chip.selected { background: #0088cc; color: #fff; border-color: #0088cc; }
+  .step {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+    align-items: flex-start;
+  }
+  .step-num {
+    flex: 0 0 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #0088cc;
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-text { font-size: 14px; color: #334155; line-height: 1.45; }
+  .result-card {
+    background: linear-gradient(135deg, #0088cc 0%, #0066aa 100%);
+    color: #fff;
+    border-radius: 16px;
+    padding: 20px 16px;
+    margin-bottom: 20px;
+  }
+  .result-card h3 { font-size: 18px; margin-bottom: 10px; line-height: 1.4; }
+  .result-card p { font-size: 14px; opacity: 0.95; margin-bottom: 12px; line-height: 1.5; }
+  .steps-list { margin: 16px 0; }
+  .steps-list .step { margin: 8px 0; }
+  .steps-list .step-num { background: #fff; color: #0088cc; }
+  .steps-list .step-text { color: #334155; }
+  .why-box {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 12px;
+    padding: 14px;
+    margin: 16px 0;
+  }
+  .why-box .why-title { font-weight: 700; color: #166534; font-size: 14px; margin-bottom: 6px; }
+  .why-box .why-text { font-size: 13px; color: #15803d; line-height: 1.5; }
+  .cta-box {
+    background: #fef3c7;
+    border: 1px solid #fcd34d;
+    border-radius: 12px;
+    padding: 14px;
+    margin: 16px 0;
+  }
+  .cta-box .cta-title { font-weight: 700; color: #92400e; font-size: 14px; margin-bottom: 6px; }
+  .cta-box .cta-text { font-size: 13px; color: #92400e; line-height: 1.5; }
+  .hidden { display: none !important; }
+  @media (max-width: 480px) { .container { max-width: 100%; border-radius: 0; } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="badge">Лид-магнит • Персональный план</div>
+    <h1>Ваш сценарий эфемерной воронки</h1>
+    <p>План действий под ваш канал за 1 минуту</p>
+  </header>
+
+  <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+  <!-- Экран 0: Приветствие -->
+  <div class="screen active" id="screen0">
+    <div class="telegram-hint">📱 Вы получите персональный план, а затем сможете заказать настройку под ключ</div>
+    <h2>Ваш канал молчит, но подписчики готовы купить</h2>
+    <p>Они читают посты. Не ставят реакции. Не пишут комментарии. А потом покупают у кого-то другого.</p>
+    <p>Эфемерная воронка превращает обычный пост в инструмент, который выявляет заинтересованных людей и ведёт их к заявке.</p>
+    <p>Ответьте на 3 вопроса — и получите персональный план, что именно сделать в вашем канале.</p>
+    <button class="btn" onclick="go(1)">Получить план</button>
+  </div>
+
+  <!-- Экран 1: Ниша -->
+  <div class="screen" id="screen1">
+    <h2>Шаг 1 из 3</h2>
+    <p>Какой у вас канал?</p>
+    <div class="chips" id="nicheChips">
+      <div class="chip" onclick="selectChip(this, 'expert')">Эксперт / консультант</div>
+      <div class="chip" onclick="selectChip(this, 'school')">Онлайн-школа</div>
+      <div class="chip" onclick="selectChip(this, 'biz')">Услуги / бизнес</div>
+      <div class="chip" onclick="selectChip(this, 'author')">Авторский канал</div>
+    </div>
+    <input type="hidden" id="qNiche" required>
+    <button class="btn" id="btn1" disabled onclick="go(2)">Далее</button>
+  </div>
+
+  <!-- Экран 2: Цель -->
+  <div class="screen" id="screen2">
+    <h2>Шаг 2 из 3</h2>
+    <p>Какая главная задача канала?</p>
+    <div class="chips" id="goalChips">
+      <div class="chip" onclick="selectChip(this, 'leads')">Получать заявки</div>
+      <div class="chip" onclick="selectChip(this, 'sales')">Продавать продукт</div>
+      <div class="chip" onclick="selectChip(this, 'warm')">Прогревать подписчиков</div>
+      <div class="chip" onclick="selectChip(this, 'magnet')">Раздавать лид-магнит</div>
+    </div>
+    <input type="hidden" id="qGoal" required>
+    <button class="btn" id="btn2" disabled onclick="go(3)">Далее</button>
+  </div>
+
+  <!-- Экран 3: Продукт -->
+  <div class="screen" id="screen3">
+    <h2>Шаг 3 из 3</h2>
+    <p>Что вы продаёте?</p>
+    <div class="form-group">
+      <label>Продукт или услуга</label>
+      <input type="text" id="qProduct" placeholder="Например: консультации по маркетингу, обучение, разработка сайтов" required>
+    </div>
+    <div class="form-group">
+      <label>Примерная аудитория (подписчиков)</label>
+      <select id="qAudience" required>
+        <option value="">Выберите</option>
+        <option>до 1000</option>
+        <option>1000–5000</option>
+        <option>5000–20 000</option>
+        <option>более 20 000</option>
+      </select>
+    </div>
+    <button class="btn" id="btn3" disabled onclick="go(4)">Показать мой план</button>
+  </div>
+
+  <!-- Экран 4: Результат — персональный план (что делать) -->
+  <div class="screen" id="screen4">
+    <div class="result-card">
+      <h3>Ваш персональный план действий</h3>
+      <p id="resultTitle">Генерируем сценарий…</p>
+    </div>
+
+    <div class="steps-list" id="resultSteps">
+      <!-- шаги вставятся через JS -->
+    </div>
+
+    <div class="why-box">
+      <div class="why-title">Что вы получите после внедрения</div>
+      <div class="why-text" id="resultWhy">Ваши подписчики начнут сами нажимать кнопки, вы увидите интерес к посту и получите целевые заявки.</div>
+    </div>
+
+    <div class="cta-box">
+      <div class="cta-title">Хотите, чтобы настроили за вас?</div>
+      <div class="cta-text">Самостоятельно собрать воронку можно, но это займёт время и навыки. Я сделаю всё под ключ: сценарий, тексты, настройку экранов и запуск в вашем канале.</div>
+    </div>
+
+    <button class="btn" onclick="go(5)">Заказать настройку под ключ 🚀</button>
+    <button class="btn secondary" onclick="go(0)">Попробовать другую нишу</button>
+  </div>
+
+  <!-- Экран 5: Заявка на настройку -->
+  <div class="screen" id="screen5">
+    <h2>Оставьте заявку</h2>
+    <p>Я свяжусь с вами, уточню детали и запущу воронку в вашем канале.</p>
+    <form id="setupForm" onsubmit="submitSetup(event)">
+      <div class="form-group">
+        <label>Ссылка на Telegram-канал</label>
+        <input type="url" id="sChannel" placeholder="https://t.me/yourchannel" required>
+      </div>
+      <div class="form-group">
+        <label>Что продаёте</label>
+        <input type="text" id="sProduct" placeholder="Например: консультации, обучение, услуги" required>
+      </div>
+      <div class="form-group">
+        <label>Ваш выбранный сценарий</label>
+        <input type="text" id="sScenario" readonly style="background:#f1f5f9; cursor:not-allowed;">
+      </div>
+      <div class="form-group">
+        <label>Telegram или email для связи</label>
+        <input type="text" id="sContact" placeholder="@username или email" required>
+      </div>
+      <div class="form-group">
+        <label>Комментарий (необязательно)</label>
+        <textarea id="sComment" placeholder="Что важно учесть при настройке…"></textarea>
+      </div>
+      <button class="btn" type="submit">Отправить заявку</button>
+    </form>
+  </div>
+
+  <!-- Экран 6: Успех -->
+  <div class="screen" id="screenSuccess">
+    <div class="success">
+      <span class="success-icon">✅</span>
+      <h2>Заявка отправлена!</h2>
+      <p>Я свяжусь с вами в ближайшее время, чтобы обсудить настройку воронки для вашего канала.</p>
+      <button class="btn ghost" onclick="go(0)">Начать сначала</button>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="footer-note">
+    Лид-магнит — бесплатный персональный план. Настройка воронки под ключ — платная услуга. Контактные данные используются только для связи по заявке.
+  </div>
+</div>
+
+<script>
+  const screens = ['screen0','screen1','screen2','screen3','screen4','screen5','screenSuccess'];
+  let current = 0;
+
+  let selections = {
+    niche: '', goal: '', product: '', audience: ''
+  };
+
+  function go(index) {
+    screens.forEach((s, i) => {
+      const el = document.getElementById(s);
+      el.classList.toggle('active', i === index);
+    });
+    current = index;
+    updateProgress();
+    if (index === 4) renderResult();
+    if (index === 5) {
+      document.getElementById('sScenario').value = getScenarioTitle();
+    }
+  }
+
+  function updateProgress() {
+    const total = screens.length - 1;
+    const pct = (current / total) * 100;
+    document.getElementById('progressBar').style.width = pct + '%';
+  }
+
+  function selectChip(el, value) {
+    const parent = el.parentElement;
+    parent.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    if (parent.id === 'nicheChips') document.getElementById('qNiche').value = value;
+    if (parent.id === 'goalChips') document.getElementById('qGoal').value = value;
+    const btn = parent.parentElement.querySelector('button');
+    if (btn) btn.disabled = false;
+  }
+
+  document.getElementById('qProduct').addEventListener('input', validateScreen3);
+  document.getElementById('qAudience').addEventListener('change', validateScreen3);
+
+  function validateScreen3() {
+    const p = document.getElementById('qProduct').value.trim();
+    const a = document.getElementById('qAudience').value;
+    document.getElementById('btn3').disabled = !(p && a);
+  }
+
+  const scenarios = {
+    expert_leads: {
+      title: 'Проблема → мини-диагностика → решение → запись',
+      why: 'Отсеиваете неподходящих лидов через диагностику, а запись на консультацию идёт уже от тёплого клиента.',
+      steps: [
+        'Опубликуйте тизер-пост с главной болью вашей аудитории.',
+        'Предложите пройти мини-диагностику через кнопки под постом.',
+        'Покажите решение, подходящее под ответы подписчика.',
+        'Предложите записаться на консультацию или созвон.'
+      ]
+    },
+    expert_sales: {
+      title: 'Интрига → кейс → продукт → покупка',
+      why: 'Сначала доказываете результат на чужом примере, затем предлагаете свой продукт.',
+      steps: [
+        'Разберите неожиданный факт или успешный кейс из ниши.',
+        'Покажите проблему клиента и почему она важна.',
+        'Представьте ваш продукт как решение.',
+        'Добавьте ограниченное предложение с кнопкой покупки.'
+      ]
+    },
+    school_leads: {
+      title: 'Миф → разоблачение → кейс ученика → лист ожидания',
+      why: 'Прогреваете аудиторию перед запуском, чтобы заявки шли от людей, которые уже верят в результат.',
+      steps: [
+        'Разберите популярный миф в вашей нише.',
+        'Объясните, почему этот подход не работает.',
+        'Покажите кейс ученика с измеримым результатом.',
+        'Предложите записаться в лист ожидания или на диагностику.'
+      ]
+    },
+    school_sales: {
+      title: 'Ошибка → правильный подход → программа → покупка',
+      why: 'Человек покупает обучение, когда понимает свою ошибку и видит вашу программу как решение.',
+      steps: [
+        'Разберите типичную ошибку ваших учеников.',
+        'Расскажите, как делать правильно (ваш подход).',
+        'Покажите структуру программы или курса.',
+        'Добавьте кнопку покупки или записи.'
+      ]
+    },
+    biz_leads: {
+      title: 'Симптом → последствия → способ решения → заявка',
+      why: 'B2B-клиент ищет решение конкретной бизнес-боли. Воронка ведёт от симптома к заявке.',
+      steps: [
+        'Опишите симптом проблемы в бизнесе клиента.',
+        'Расскажите, какими будут последствия, если не решать её.',
+        'Предложите свой способ решения.',
+        'Соберите заявку на аудит или консультацию.'
+      ]
+    },
+    biz_sales: {
+      title: 'Кейс компании → ROI → коммерческое предложение → сделка',
+      why: 'Бизнесу нужны цифры. Покажите пример с расчётом отдачи — и заявка придёт сама.',
+      steps: [
+        'Разберите кейс аналогичного клиента с конкретными цифрами.',
+        'Покажите расчёт вложений и ожидаемой отдачи.',
+        'Опишите ваше коммерческое предложение.',
+        'Соберите заявку на коммерческое предложение.'
+      ]
+    },
+    author_leads: {
+      title: 'Неожиданный факт → полезный архив → лид-магнит → предложение',
+      why: 'Сначала даёте ценность, чтобы подписчик привыкал получать пользу и доверял вам.',
+      steps: [
+        'Опубликуйте неожиданный факт из вашего архива.',
+        'Предложите полезную подборку или материал.',
+        'Предложите забрать лид-магнит.',
+        'Переведите заинтересованных в бота или на заявку.'
+      ]
+    },
+    author_sales: {
+      title: 'История автора → продукт → отзыв → покупка',
+      why: 'В авторском канале покупают не продукт, а человека. Расскажите свою историю и покажите результат.',
+      steps: [
+        'Расскажите личную историю или кейс автора.',
+        'Покажите, чем это полезно читателю.',
+        'Представьте ваш продукт как продолжение.',
+        'Добавьте кнопку покупки.'
+      ]
+    }
+  };
+
+  function getScenarioKey() {
+    const niche = document.getElementById('qNiche').value;
+    const goal = document.getElementById('qGoal').value;
+    const map = {
+      expert: { leads: 'expert_leads', sales: 'expert_sales', warm: 'expert_leads', magnet: 'expert_leads' },
+      school: { leads: 'school_leads', sales: 'school_sales', warm: 'school_leads', magnet: 'school_leads' },
+      biz:    { leads: 'biz_leads',    sales: 'biz_sales',    warm: 'biz_leads',    magnet: 'biz_leads' },
+      author: { leads: 'author_leads', sales: 'author_sales', warm: 'author_leads', magnet: 'author_leads' }
+    };
+    return map[niche] && map[niche][goal] ? map[niche][goal] : null;
+  }
+
+  function getScenarioTitle() {
+    const key = getScenarioKey();
+    return scenarios[key] ? scenarios[key].title : 'Персональный сценарий воронки';
+  }
+
+  function renderResult() {
+    const key = getScenarioKey();
+    const sc = scenarios[key];
+    if (!sc) return;
+
+    document.getElementById('resultTitle').textContent = sc.title;
+    document.getElementById('resultWhy').textContent = sc.why;
+
+    const stepsEl = document.getElementById('resultSteps');
+    stepsEl.innerHTML = sc.steps.map((s, i) => `
+      <div class="step">
+        <div class="step-num">${i + 1}</div>
+        <div class="step-text">${s}</div>
+      </div>
+    `).join('');
+  }
+
+  const BOT_TOKEN = '6804952639:AAH6tUVnqUsaSipAD0T7p-CI9irqKvQgfbI';
+  const ADMIN_CHAT_ID = '240087935';
+
+  async function sendToTelegram(text) {
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+    await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: ADMIN_CHAT_ID,
+        text: text,
+        parse_mode: 'HTML'
+      })
+    });
+  }
+
+  async function submitSetup(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.textContent = 'Отправляю…';
+    btn.disabled = true;
+
+    const channel = document.getElementById('sChannel').value.trim();
+    const product = document.getElementById('sProduct').value.trim();
+    const scenario = document.getElementById('sScenario').value.trim();
+    const contact = document.getElementById('sContact').value.trim();
+    const comment = document.getElementById('sComment').value.trim();
+
+    const text = `
+🔔 <b>Новая заявка на настройку воронки</b>
+
+📺 Канал: ${channel || '—'}
+💼 Продукт: ${product || '—'}
+🗂 Сценарий: ${scenario || '—'}
+📞 Контакт: ${contact || '—'}
+📝 Комментарий: ${comment || '—'}
+    `.trim();
+
+    try {
+      await sendToTelegram(text);
+      console.log('Заявка отправлена в Telegram');
+    } catch (err) {
+      console.error('Ошибка отправки в Telegram:', err);
+      alert('Не удалось отправить заявку. Попробуйте ещё раз.');
+      btn.textContent = 'Отправить заявку';
+      btn.disabled = false;
+      return;
+    }
+
+    await new Promise(r => setTimeout(r, 500));
+    go('screenSuccess');
+  }
+
+  updateProgress();
+</script>
+
+</body>
+</html>
